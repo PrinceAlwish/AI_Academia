@@ -119,9 +119,15 @@
         }
     </script>
 	<footer>
-        <p>© 2024</p>
-        <p>Developed by AmeisenLAB, driving innovation through AI technology and thought leadership.</p>
-    </footer>
+    <p>© <span id="year"></span></p>
+    <p>Developed by AmeisenLAB, driving innovation through AI technology and thought leadership.</p>
+</footer>
+
+<script>
+    // Automatically set the current year
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
 </body>
 
 </html>
