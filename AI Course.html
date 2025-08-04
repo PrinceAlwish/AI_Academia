@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Education Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            margin: 20px;
+            color: #333;
+        }
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .question {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .question p {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 80px;
+        }
+        button {
+            display: block;
+            width: 200px;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 30px auto 20px auto;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            background-color: #e9f7ff;
+            display: none; /* Hidden by default */
+        }
+        .result-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .result-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .result-item .explanation {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>AI in Education Quiz</h1>
+        <h2>Test Your Knowledge from the "AI 101 for Teachers" Series</h2>
+
+        <div id="quiz">
+            <!-- Questions will be loaded here by JavaScript -->
+        </div>
+
+        <button onclick="submitQuiz()">Submit Quiz</button>
+
+        <div id="results">
+            <h2>Your Results</h2>
+            <p id="score"></p>
+            <div id="feedback"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: 'mcq',
+                question: 'What recent development transformed AI from a "quirky thing" into something that could "seemingly understand information" and make sense of it, according to Sal Khan?',
+                options: {
+                    a: 'The launch of GPT-2',
+                    b: 'The transition from GPT-3 to GPT-3.5 (ChatGPT) or GPT-4',
+                    c: 'The release of DALL-E for image generation',
+                    d: 'The development of basic neural networks',
+                },
+                answer: 'b',
+                explanation: 'The significant change was the transition from GPT-3 to GPT-3.5 (ChatGPT) or more importantly GPT-4, which enabled AI to seem to understand and explain information beyond just answering questions.'
+            },
+            {
+                type: 'mcq',
+                question: 'What is the underlying technology for tools like ChatGPT that generate text or code, as described in the sources?',
+                options: {
+                    a: 'A vast database of pre-written content',
+                    b: 'A large language model (LLM)',
+                    c: 'A simple pattern-matching algorithm',
+                    d: 'An advanced image recognition system',
+                },
+                answer: 'b',
+                explanation: 'Tools like ChatGPT are based on an underlying technology called a large language model (LLM).'
+            },
+            {
+                type: 'mcq',
+                question: 'What is a primary way AI can address an equity gap in education?',
+                options: {
+                    a: 'By replacing expensive textbooks with free online resources.',
+                    b: 'By providing every student with access to a low-cost personalized tutor.',
+                    c: 'By standardizing all educational content across schools.',
+                    d: 'By reducing the need for teachers in underprivileged areas.',
+                },
+                answer: 'b',
+                explanation: 'AI closes an equity gap by enabling every student with access to get basically a low-cost personalized tutor, getting things done that previously required more money.'
+            },
+            {
+                type: 'mcq',
+                question: 'What is a significant downside or risk of AI mentioned in the sources that educators should consider?',
+                options: {
+                    a: 'It requires constant software updates.',
+                    b: 'It can create misinformation, have biases, and make mistakes.',
+                    c: 'It replaces the need for human creativity in students.',
+                    d: 'It makes learning too easy for students.',
+                },
+                answer: 'b',
+                explanation: 'AI technology has downsides and risks including making mistakes, creating misinformation, having biases (political, racial, gender), and being tricked into creating dangerous content.'
+            },
+            {
+                type: 'mcq',
+                question: 'According to the sources, what is the most important job for education IT departments regarding AI?',
+                options: {
+                    a: 'To ban all AI tools from schools.',
+                    b: 'To develop their own AI tools internally.',
+                    c: 'To choose which AI tools are ready for education and address downsides.',
+                    d: 'To focus solely on teaching students how to code AI.',
+                },
+                answer: 'c',
+                explanation: 'The most important job is not whether to ban or allow AI, but choosing which AI tools are ready for education that address these downsides.'
+            },
+            {
+                type: 'mcq',
+                question: 'What is the general consensus regarding AI replacing teacher jobs?',
+                options: {
+                    a: 'AI will replace most teacher jobs globally within a decade.',
+                    b: 'AI will lead to a significant increase in teacher shortages.',
+                    c: 'AI will not lead to less need for teachers but will make teaching easier and enable personalized learning.',
+                    d: 'AI will only replace administrative jobs, not classroom teaching roles.',
+                },
+                answer: 'c',
+                explanation: 'The sources state that the world has a massive teacher shortage and AI will not lead to less need for teachers globally, but rather make the job easier, reduce hardship, and enable more personalized learning.'
+            },
+            {
+                type: 'mcq',
+                question: 'Which of the following traditional skills is emphasized as still highly relevant and potent in the generative AI revolution?',
+                options: {
+                    a: 'Memorization of facts and figures',
+                    b: 'Manual calculation skills',
+                    c: 'Critical thinking, problem-solving, reading, and writing',
+                    d: 'Knowledge of ancient history and mythology',
+                },
+                answer: 'c',
+                explanation: 'Traditional skills like writing really well, solid knowledge base, using tools well, strong critical thinking skills, and some statistics knowledge are going to be "quite potent" and "even more so" in this revolution.'
+            },
+            {
+                type: 'mcq',
+                question: 'What is one key distinction between "teaching with AI" and "teaching about AI"?',
+                options: {
+                    a: 'Teaching with AI focuses on AI ethics, while teaching about AI focuses on AI programming.',
+                    b: 'Teaching with AI means using AI as a tool, while teaching about AI means understanding what AI is and how it works.',
+                    c: 'Teaching with AI is for teachers, while teaching about AI is for students.',
+                    d: 'Teaching with AI is for administrative tasks, while teaching about AI is for content creation.',
+                },
+                answer: 'b',
+                explanation: 'Teaching with AI involves using it as a tool to enhance teaching and learning, often also teaching students how to use it. Teaching about AI involves teaching students what AI is and how it works.'
+            },
+            {
+                type: 'mcq',
+                question: 'What specific feature of Khan Academy\'s Conmigo helps teachers monitor student interactions for inappropriate or unproductive behavior?',
+                options: {
+                    a: 'It offers a "refresh my knowledge" feature for teachers.',
+                    b: 'It has a "class snapshot" for overall student progress.',
+                    c: 'It includes guard rails, allowing teachers to monitor student actions and receive notifications for problematic behavior.',
+                    d: 'It provides pre-written essays for students to submit as homework.',
+                },
+                answer: 'c',
+                explanation: 'Conmigo has guard rails, everything a student does is monitorable by a teacher, and a second AI can monitor for unproductive/unhealthy behavior or cheating, notifying teachers or parents.'
+            },
+            {
+                type: 'mcq',
+                question: 'According to the sources, why are AI detection tools (for AI-written content) generally ineffective and even problematic?',
+                options: {
+                    a: 'They are too expensive for most schools to implement.',
+                    b: 'They have a high false positive rate, disproportionately affecting non-native English speakers.',
+                    c: 'Students can easily bypass them with simple rephrasing.',
+                    d: 'They only work for short texts and not full essays.',
+                },
+                answer: 'b',
+                explanation: 'AI detectors don\'t work; they have a high false positive rate, disproportionately falling on people whose English is a second language.'
+            },
+            {
+                type: 'mcq',
+                question: 'What is a key principle students should understand about AI output, particularly regarding factual information?',
+                options: {
+                    a: 'AI output is always 100% factual and reliable.',
+                    b: 'AI is a person and knows your personal context.',
+                    c: 'AI can fabricate information and should be checked with credible sources.',
+                    d: 'The less context you give AI, the more useful it will be.',
+                },
+                answer: 'c',
+                explanation: 'AI can fabricate (make up) information, can be mistaken, and students should be responsible for their own work by checking facts with credible sources.'
+            },
+            {
+                type: 'mcq',
+                question: 'When evaluating an AI tool for use in a school environment, what is a crucial aspect to check regarding its design?',
+                options: {
+                    a: 'Its graphic design and user interface appeal.',
+                    b: 'Whether it was developed specifically for use in education.',
+                    c: 'Its ability to create complex video content.',
+                    d: 'Its integration with social media platforms.',
+                },
+                answer: 'b',
+                explanation: 'When evaluating an AI tool, first check to see if it was developed for use in education, as this is a shorthand for understanding its safety standards and compliance with regulations like FERPA and COPPA.'
+            },
+            {
+                type: 'saq',
+                question: 'Explain how a Large Language Model (LLM) fundamentally works to generate new information, using statistics and probabilities.',
+                keywords: ['statistics', 'probabilities', 'predict', 'text', 'trained', 'neural network', 'patterns'],
+                explanation: 'A large language model is a giant neural network trained on vast amounts of information (like books, articles, code from the internet). It uses **statistics and probabilities** to **predict** the next most likely **word or text** sequence based on all the previous text it has been **trained on**, essentially generating new information rather than truly understanding or being intelligent. It finds **patterns** in the data.'
+            },
+            {
+                type: 'saq',
+                question: 'List at least three ways AI can specifically help teachers with their administrative tasks and workload, based on the sources.',
+                keywords: ['lesson plans', 'grading', 'progress reports', 'emails', 'rubrics', 'presentations', 'classroom resources', 'assessments'],
+                explanation: 'AI can significantly reduce teacher workload by assisting with administrative tasks. Specific examples include helping with: **writing progress reports**, **generating lesson plans**, **grading papers**, drafting **parent emails**, creating **rubrics**, making **presentations** about topics, and creating **formative assessments**.'
+            },
+            {
+                type: 'saq',
+                question: 'Describe how Khan Academy\'s Conmigo is designed to mitigate risks like cheating in an educational setting.',
+                keywords: ['guard rails', 'monitor', 'teacher visibility', 'notify', 'not do work for student', 'coaching'],
+                explanation: 'Conmigo is designed with **guard rails**. All student activity is **monitorable by a teacher**, and a second AI can **monitor** for unproductive, unhealthy behavior, or cheating, actively **notifying** the teacher or parents. Crucially, it\'s built to **not do the work for the student** but rather to work *with* them, acting as a writing coach or tutor, enabling brainstorming and feedback rather than direct answers.'
+            },
+            {
+                type: 'saq',
+                question: 'What is "AI fiction" and why is it a concern when using AI tools?',
+                keywords: ['made up', 'not true', 'hallucination', 'mimic human language', 'not knowledge models', 'spread false information', 'faster', 'larger amounts'],
+                explanation: '**AI fiction** (also called hallucination) refers to instances where AI systems confidently produce **text that sounds very real but is actually not true** or **made up**. This is a concern because large language models are designed to **mimic human language**, not to be 100% factual, meaning they are **language models, not knowledge models**. This can lead to the **spread of false information** much **faster** and in **larger amounts** than before, making it difficult for users (especially students) to differentiate between factual information and AI-generated content.'
+            },
+            {
+                type: 'saq',
+                question: 'Explain the concept of "algorithmic bias" in AI and provide an example from the sources.',
+                keywords: ['unfair', 'discriminatory', 'errors', 'training data', 'design', 'favoring one group', 'facial recognition', 'left-leaning', 'non-native English speakers'],
+                explanation: '**Algorithmic bias** is when AI systems produce **unfair or discriminatory results**, often due to biases in the **data they\'re trained on** or their **algorithm design**. It represents consistent errors favoring one group over another. An example from the sources is **facial recognition systems** performing poorly on the faces of people of color, leading to wrongful accusations. Another example is ChatGPT exhibiting a **left-leaning bias** or AI detection programs being more likely to flag writing from **non-native English speakers** as AI-generated.'
+            },
+            {
+                type: 'saq',
+                question: 'According to the sources, what is the biggest risk for educators regarding AI if they "do nothing" or try to ban it?',
+                keywords: ['doing nothing', 'teach same way', 'prevent use', 'leave students behind', 'not prepare for future'],
+                explanation: 'The **biggest risk** for educators is **doing nothing**, meaning continuing to **teach everything the exact same way** or trying to **prevent AI from being used** in classrooms. This approach risks **leaving students behind** and failing to **prepare them for the future of education and work**, as AI is a game-changing tool that will transform education regardless.'
+            },
+            {
+                type: 'saq',
+                question: 'What are two key principles students should understand when interacting with AI, according to the Mollicks?',
+                keywords: ['fabricate', 'not a person', 'context', 'in charge', 'check sources'],
+                explanation: 'Two key principles for students when interacting with AI are: 1. **AI can fabricate**: Any output may be made up, mistaken, or subtly wrong, so students should be responsible for their own work and **check sources** with credible information. 2. **AI is not a person**: It\'s easy to imbue AI with a personality, but it doesn\'t know the student or their context. Students should also understand they are **in charge** of the conversation and can direct it. (Other valid principles: giving AI a lot of context for better results, and students being in charge of the conversation.)'
+            },
+            {
+                type: 'saq',
+                question: 'How do the sources suggest teachers should evaluate AI tools for safety and appropriateness in a school environment?',
+                keywords: ['designed for education', 'teacher visibility', 'guard rails', 'student safety', 'FERPA', 'COPPA', 'privacy policy', 'help articles', 'stress test'],
+                explanation: 'Teachers should consider: 1. Whether the tool was **designed to be used in an educational setting**. 2. If the teacher has **visibility into how students are interacting** with the tool. 3. What **guard rails** are in place to ensure **student safety** (e.g., student privacy, preventing misinformation, bias, or dangerous content). This includes checking for compliance with regulations like **FERPA and COPPA**. It\'s also advised to scan the **privacy policy** for school use, age restrictions, and data practices, look for **first-party help articles**, and even **stress test** the tool yourself.'
+            }
+        ];
+
+        function loadQuiz() {
+            const quizDiv = document.getElementById('quiz');
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.id = `q${index}`;
+
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                if (q.type === 'mcq') {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('options');
+                    for (const key in q.options) {
+                        const label = document.createElement('label');
+                        const input = document.createElement('input');
+                        input.type = 'radio';
+                        input.name = `question${index}`;
+                        input.value = key;
+                        label.appendChild(input);
+                        label.appendChild(document.createTextNode(q.options[key]));
+                        optionsDiv.appendChild(label);
+                    }
+                    questionDiv.appendChild(optionsDiv);
+                } else if (q.type === 'saq') {
+                    const textarea = document.createElement('textarea');
+                    textarea.id = `saq${index}`;
+                    textarea.placeholder = 'Your answer here...';
+                    questionDiv.appendChild(textarea);
+                }
+                quizDiv.appendChild(questionDiv);
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = ''; // Clear previous feedback
+
+            questions.forEach((q, index) => {
+                const questionElement = document.getElementById(`q${index}`);
+                const resultItem = document.createElement('div');
+                resultItem.classList.add('result-item');
+                let isCorrect = false;
+                let userAnswer = '';
+                let correctAnswer = '';
+
+                if (q.type === 'mcq') {
+                    const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                    if (selectedOption) {
+                        userAnswer = selectedOption.value;
+                        correctAnswer = q.answer;
+                        if (userAnswer === correctAnswer) {
+                            score++;
+                            isCorrect = true;
+                        }
+                    } else {
+                        userAnswer = 'No answer selected';
+                    }
+                } else if (q.type === 'saq') {
+                    const textarea = document.getElementById(`saq${index}`);
+                    userAnswer = textarea.value.trim().toLowerCase();
+                    const requiredKeywords = q.keywords.map(kw => kw.toLowerCase());
+
+                    let matches = 0;
+                    requiredKeywords.forEach(keyword => {
+                        if (userAnswer.includes(keyword)) {
+                            matches++;
+                        }
+                    });
+
+                    // For SAQ, consider it correct if a significant portion of keywords are present.
+                    // This threshold can be adjusted. Here, requiring at least 60% of keywords.
+                    if (matches >= requiredKeywords.length * 0.6) {
+                        score++;
+                        isCorrect = true;
+                    }
+                    correctAnswer = `Expected: Contains keywords like ${q.keywords.join(', ')}`;
+                }
+
+                resultItem.innerHTML = `<strong>${index + 1}. ${q.question}</strong><br>`;
+                resultItem.innerHTML += `Your Answer: ${q.type === 'mcq' ? (q.options[userAnswer] || userAnswer) : userAnswer}<br>`;
+                resultItem.innerHTML += `Correct Answer: ${q.explanation}<br>`;
+                resultItem.innerHTML += `<span class="explanation">Explanation: ${q.explanation}</span>`;
+
+
+                if (isCorrect) {
+                    resultItem.classList.add('correct');
+                    resultItem.innerHTML += `<br>Status: Correct!`;
+                } else {
+                    resultItem.classList.add('incorrect');
+                    resultItem.innerHTML += `<br>Status: Incorrect.`;
+                }
+                feedbackDiv.appendChild(resultItem);
+            });
+
+            document.getElementById('score').textContent = `You scored ${score} out of ${questions.length}.`;
+            document.getElementById('results').style.display = 'block';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Load the quiz questions when the page loads
+        document.addEventListener('DOMContentLoaded', loadQuiz);
+    </script>
+</body>
+</html>
